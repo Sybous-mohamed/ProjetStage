@@ -3,66 +3,90 @@ session_start();
 include 'config/database.php';
 include 'includes/functions.php';
 
+//les errors
+if (!isset($_SESSION['errors'])) {
+    $_SESSION['errors'] = array();
+}
 
+//inscription
 if (isset($_POST['inscription-btn'])) {
+
     $username = trim($_POST['username']);
     $email = trim($_POST['user-mail']);
     $password = $_POST['user-pass'];
     $confirm = $_POST['user-confirmpass'];
 
+    $_SESSION['username'] = $_POST['username'];
 
-
+    // Validation
     if (!isValidName($username)) {
-        die("Le nom doit contenir uniquement des lettres et des espaces.");
+        $_SESSION['errors']['username'] = "Nom invalide.";
     }
 
     if (!isValidEmail($email)) {
-        die("Email invalide.");
+        $_SESSION['errors']['email'] = "Email invalide.";
+    }
+
+    if (strlen($password) < 6) {
+        $_SESSION['errors']['password'] = "Le mot de passe doit contenir au moins 6 caractères.";
     }
 
     if ($password !== $confirm) {
-        die("Les mots de passe ne correspondent pas.");
+        $_SESSION['errors']['confirm'] = "Les mots de passe ne correspondent pas.";
     }
 
+    // Vérifier email déjà utilisé
     $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    if ($stmt->rowCount() > 0) {//ychof wach déja kayn dak email
-        die("Cet email est déjà utilisé.");
+    $stmt->execute(array($email));
+    if ($stmt->rowCount() > 0) {
+        $_SESSION['errors']['email_used'] = "Cet email est déjà utilisé.";
     }
 
-    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    // Si erreurs -> revenir au formulaire
+    if (!empty($_SESSION['errors'])) {
+        header("Location: index.php");
+        exit;
+    }
 
+    // Insertion utilisateur
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
     $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-    $stmt->execute([$username, $email, $passwordHash]);
+    $stmt->execute(array($username, $email, $passwordHash));
 
     $_SESSION['user_id'] = $conn->lastInsertId();
     header('Location: courses.php');
     exit;
 }
 
+//connexion
 if (isset($_POST['login_btn'])) {
     $email = trim($_POST['login_email']);
     $password = $_POST['login_password'];
 
     if (!isValidEmail($email)) {
-        die("Email invalide.");
+        $_SESSION['errors']['login'] = "Email invalide.";
+        header("Location: index.php#loginModal");
+        exit;
     }
-/** */
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
 
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute(array($email));
+    $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
         header('Location: courses.php');
         exit;
     } else {
-        die("Email ou mot de passe incorrect.");
+        $_SESSION['errors']['logintwo'] = "Email ou mot de passe incorrect.";
+        header("Location: index.php");
+        exit;
     }
 }
 
-header('Location: index.php');
-exit;
 
+
+    header('Location: index.php');
+exit;
 ?>

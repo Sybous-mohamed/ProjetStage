@@ -17,30 +17,8 @@
             background-color: #f5f7fa;
             min-height: 100vh;
             color: #333;
-        }
-        
-        /* Header */
-        .header {
-            background-color: #2c3e50;
-            padding: 0.5rem 2rem;
-            height: 60px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
+            padding: 0;
+            margin: 0;
         }
         
         /* */
@@ -235,14 +213,10 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <span>Bacprep</span>
-        </div>
-    </header>
 
+<?php include('includes/header.php')?>
     <!-- Main Content -->
+
     <main class="main-content">
         <!-- Search Form -->
         <section id="cours" class="contact-form">

@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -229,7 +231,7 @@
     <button class="scroll-top" onclick="scrollToTop()"><i class='bx bx-up-arrow-alt'></i></button>
 
     <!-- Login-->
-<div class="modal-info" id="loginModal">
+<div class="modal-info" id="loginModal" >
     <div class="modal">
         <div class="header-inscription">
             <h2 class="titre-inscription">Connexion</h2>
@@ -237,10 +239,16 @@
         </div>
         <form class="modal-form" method="post" action="auth.php">
             <input type="email" name="login_email" placeholder="Email" required>
+            <p id="emailerror" style="text-align: center; color : red ;">
+                <?php if(isset($_SESSION['errors']['login'])) echo $_SESSION['errors']['login']; ?>
+            </p>
             <input type="password" name="login_password" placeholder="Mot de passe" required>
             <button type="submit" class="btn btn-primary" name="login_btn">
                 <i class='bx bx-log-in'></i> Se connecter
             </button>
+            <p id="deja-inscri" style="text-align: center; color : red ;">
+                <?php if(isset($_SESSION['errors']['logintwo'])) echo $_SESSION['errors']['logintwo']; ?>
+            </p>
             <p style="text-align: center; color: #7f8c8d; margin-top: 1rem;">
                 Pas de compte ? <a href="#" onclick="switchToRegister()" style="color: #3498db;">S'inscrire</a>
             </p>
@@ -248,28 +256,66 @@
     </div>
 </div>
 
-<!-- inscription Modal -->
+<!-- inscription -->
 <div class="modal-info" id="inscriptionModal">
     <div class="modal">
         <div class="header-inscription">
             <h2 class="titre-inscription">Inscription</h2>
             <button class="modal-close" onclick="closeModal('inscriptionModal')"><i class='bx bx-x'></i></button>
         </div>
-        <form class="modal-form" method="post" action="auth.php">
+        <form class="modal-form" method="post" onsubmit="return validateInscriptionForm();" action="auth.php">
             <input type="text" name="username" placeholder="Nom complet" required>
+            <p id="errornom" style="text-align: center; color : red ;">
+                <?php if (isset($_SESSION['errors']['username'])) echo $_SESSION['errors']['username']; ?>
+            </p>
             <input type="email" name="user-mail" placeholder="Email" required>
+            <p id="errormailinscri" style="text-align: center; color : red ;">
+                <?php if (isset($_SESSION['errors']['email'])) echo $_SESSION['errors']['email']; ?>
+            </p>
             <input type="password" name="user-pass" placeholder="Mot de passe" required>
+            <p id="errorpass" style="text-align: center; color : red ;">
+                <?php if (isset($_SESSION['errors']['password'])) echo $_SESSION['errors']['password']; ?>
+            </p>
             <input type="password" name="user-confirmpass" placeholder="Confirmer mot de passe" required>
+            <p id="errorpassconf" style="text-align: center; color : red ;">
+                <?php if (isset($_SESSION['errors']['confirm'])) echo $_SESSION['errors']['confirm']; ?>
+            </p>
             <button type="submit" class="btn btn-primary" name="inscription-btn">
                 <i class='bx bx-user-plus'></i> S'inscrire
             </button>
+            <p id="email-deja-inscri" style="text-align: center; color : red;">
+                <?php if(isset($_SESSION['errors']['email_used']))echo $_SESSION['errors']['email_used']; ?>
+            </p>
             <p style="text-align: center; color: #7f8c8d; margin-top: 1rem;">
                 Déjà inscrit ? <a href="#" onclick="switchToLogin()" style="color: #3498db;">Se connecter</a>
             </p>
         </form>
     </div>
 </div>
-    <script src="./assets/script.js"></script>
+    <script src="assets/script.js"></script>
+ <script>
+<?php if (!empty($_SESSION['errors'])): ?>
+    window.addEventListener('load', function () {
+    <?php
+        //inscription
+        if (
+            isset($_SESSION['errors']['username']) ||isset($_SESSION['errors']['email']) ||
+            isset($_SESSION['errors']['password']) || isset($_SESSION['errors']['confirm']) ||
+            isset($_SESSION['errors']['email_used'])
+            ) {
+                echo "inscriptionModal();";
+            }
+        
+            //login؟
+            elseif (isset($_SESSION['errors']['login']) || isset($_SESSION['errors']['logintwo'])) {
+               echo "showLoginModal();";
+            }
+        ?>
+    });
+    <?php endif; ?>
+</script>
+
+    <?php unset($_SESSION['errors']); ?>
 </body>
 </html>
 

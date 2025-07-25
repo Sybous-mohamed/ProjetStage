@@ -1,3 +1,6 @@
+
+console.log("hiiiiii");
+
 function showLoginModal() {
     document.getElementById('loginModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
