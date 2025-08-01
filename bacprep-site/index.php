@@ -8,6 +8,35 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>BacPrep - Plateforme de Préparation</title>
     <link rel="stylesheet" href="./assets/style.css">
+    <style>
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .password-container input {
+            width: 100%;
+            padding-right: 45px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            cursor: pointer;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle:hover {
+            color: #3498db;
+        }
+        
+        .password-toggle.active {
+            color: #3498db;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -35,7 +64,7 @@
             </button>
         </div>
     </header>
-
+    <div class="container">
     <!-- accueil -->
     <main class="accueil">
         <!-- Hero Section -->
@@ -63,9 +92,9 @@
             </div>
             
             <div class="m3lomat">
-                <i class='bx bx-test-tube feature-icon'></i>
-                <h3>Exercices Corrigés</h3>
-                <p>Entraînez-vous avec des centaines d'exercices et leurs corrigés détaillés.</p>
+            <i class='bx bx-file feature-icon'></i>
+            <h3>Fiches de Révision</h3>
+            <p>Révisez efficacement avec des fiches synthétiques couvrant les points clés de chaque leçon.</p>
             </div>
         </section>
 
@@ -75,7 +104,7 @@
             <div class="statique-div">
                 <div class="statCHild">
                     <i class='bx bx-book' style="font-size: 2rem; color: #3498db; margin-bottom: 0.5rem;"></i>
-                    <div class="stat-number">50+</div>
+                    <div class="stat-number">+180</div>
                     <div class="stat-label">Cours disponibles</div>
                 </div>
                 
@@ -230,6 +259,8 @@
     <!-- Scroll too Top -->
     <button class="scroll-top" onclick="scrollToTop()"><i class='bx bx-up-arrow-alt'></i></button>
 
+    </div>
+    
     <!-- Login-->
 <div class="modal-info" id="loginModal" >
     <div class="modal">
@@ -242,7 +273,10 @@
             <p id="emailerror" style="text-align: center; color : red ;">
                 <?php if(isset($_SESSION['errors']['login'])) echo $_SESSION['errors']['login']; ?>
             </p>
-            <input type="password" name="login_password" placeholder="Mot de passe" required>
+            <div class="password-container">
+                <input type="password" name="login_password" id="loginPassword" placeholder="Mot de passe" required>
+                <i class='bx bx-hide password-toggle' onclick="togglePassword('loginPassword', this)"></i>
+            </div>
             <button type="submit" class="btn btn-primary" name="login_btn">
                 <i class='bx bx-log-in'></i> Se connecter
             </button>
@@ -272,11 +306,17 @@
             <p id="errormailinscri" style="text-align: center; color : red ;">
                 <?php if (isset($_SESSION['errors']['email'])) echo $_SESSION['errors']['email']; ?>
             </p>
-            <input type="password" name="user-pass" placeholder="Mot de passe" required>
+            <div class="password-container">
+                <input type="password" name="user-pass" id="registerPassword" placeholder="Mot de passe" required>
+                <i class='bx bx-hide password-toggle' onclick="togglePassword('registerPassword', this)"></i>
+            </div>
             <p id="errorpass" style="text-align: center; color : red ;">
                 <?php if (isset($_SESSION['errors']['password'])) echo $_SESSION['errors']['password']; ?>
             </p>
-            <input type="password" name="user-confirmpass" placeholder="Confirmer mot de passe" required>
+            <div class="password-container">
+                <input type="password" name="user-confirmpass" id="confirmPassword" placeholder="Confirmer mot de passe" required>
+                <i class='bx bx-hide password-toggle' onclick="togglePassword('confirmPassword', this)"></i>
+            </div>
             <p id="errorpassconf" style="text-align: center; color : red ;">
                 <?php if (isset($_SESSION['errors']['confirm'])) echo $_SESSION['errors']['confirm']; ?>
             </p>
@@ -293,6 +333,19 @@
     </div>
 </div>
     <script src="assets/script.js"></script>
+    <script>
+        // Fonction pour basculer la visibilité du mot de passe
+        function togglePassword(inputId, toggleIcon) {
+            const passwordInput = document.getElementById(inputId);
+            const isPassword = passwordInput.type === 'password';
+            
+            //  le type d'input
+            passwordInput.type = isPassword ? 'text' : 'password';
+            
+            // l'icône
+            toggleIcon.className = isPassword ? 'bx bx-show password-toggle active' : 'bx bx-hide password-toggle';
+        }
+    </script>
  <script>
 <?php if (!empty($_SESSION['errors'])): ?>
     window.addEventListener('load', function () {
@@ -318,4 +371,3 @@
     <?php unset($_SESSION['errors']); ?>
 </body>
 </html>
-

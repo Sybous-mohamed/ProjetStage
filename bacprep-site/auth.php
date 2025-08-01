@@ -4,9 +4,9 @@ include 'config/database.php';
 include 'includes/functions.php';
 
 //les errors
-if (!isset($_SESSION['errors'])) {
-    $_SESSION['errors'] = array();
-}
+
+    $_SESSION['errors'] = [];
+
 
 //inscription
 if (isset($_POST['inscription-btn'])) {
@@ -15,7 +15,7 @@ if (isset($_POST['inscription-btn'])) {
     $email = trim($_POST['user-mail']);
     $password = $_POST['user-pass'];
     $confirm = $_POST['user-confirmpass'];
-
+    $_SESSION["mail"] = $email;
     $_SESSION['username'] = $_POST['username'];
 
     // Validation
@@ -42,7 +42,7 @@ if (isset($_POST['inscription-btn'])) {
         $_SESSION['errors']['email_used'] = "Cet email est déjà utilisé.";
     }
 
-    // Si erreurs -> revenir au formulaire
+    // Si erreurs ->  formulaire
     if (!empty($_SESSION['errors'])) {
         header("Location: index.php");
         exit;
@@ -62,7 +62,7 @@ if (isset($_POST['inscription-btn'])) {
 if (isset($_POST['login_btn'])) {
     $email = trim($_POST['login_email']);
     $password = $_POST['login_password'];
-
+    $_SESSION["mail"] = $email;
     if (!isValidEmail($email)) {
         $_SESSION['errors']['login'] = "Email invalide.";
         header("Location: index.php#loginModal");

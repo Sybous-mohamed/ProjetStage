@@ -1,3 +1,12 @@
+<?php
+session_start();
+include 'config/database.php';
+$stmt = $conn->prepare("SELECT * FROM users where email=?");
+$stmt->execute(array($_SESSION["mail"]));
+$user = $stmt->fetch();
+$_SESSION["user_id"]=  $user["id"];
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -120,96 +129,6 @@
         #contact .contact-form {
             margin-top: 2rem;
         }
-        
-        /* Footer */
-        .footer {
-            background-color: #2c3e50;
-            padding: 3rem 2rem 1rem;
-            color: white;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .footer-info h3 {
-            color: white;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .footer-info p,
-        .footer-info a {
-            color: #bdc3c7;
-            text-decoration: none;
-            line-height: 1.6;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        
-        .footer-info a:hover {
-            color: #3498db;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .social-links a:hover {
-            background-color: #3498db;
-            transform: translateY(-2px);
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #bdc3c7;
-            font-size: 0.9rem;
-        }
-        
-        /* mobile */
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
-                padding: 1rem;
-                height: auto;
-            }
-            
-            .main-content {
-                margin-top: 100px;
-            }
-            
-            .row {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
@@ -274,55 +193,34 @@
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-info">
-                <h3><i class='bx bx-book'></i> BacPrep</h3>
-                <p>Plateforme de préparation au baccalauréat offrant des ressources pédagogiques de qualité pour toutes les filières.</p>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/moha.sy.603544"><i class='bx bxl-facebook'></i></a>
-                    <a href="https://instagram.com/moha_syb"><i class='bx bxl-instagram'></i></a>
-                    <a href="https://wa.me/212675238048"><i class='bx bxl-whatsapp'></i></a>
-                </div>
-            </div>
-            <div class="footer-info">
-                <h3><i class='bx bx-map'></i> Contact</h3>
-                <p><i class='bx bx-envelope'></i>mohamed.sybous@gmail.com</p>
-                <p><i class='bx bx-phone'></i> +212 675238048</p>
-                <p><i class='bx bx-map'></i> Ouled Berhil, Maroc</p>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2024 EduMaroc - Plateforme d'Éducation Marocaine. Tous droits réservés. 🇲🇦</p>
-        </div>
-    </footer>
+    <?php include("includes/footer.php") ?>
+
 
     <script>
-        const coursesData = {
+         const coursesData = {
             "1bac": {
-                "Sciences Expérimentales": ["Arabe", "Français", "Éducation Islamique", "Histoire-Géographie"],
+                "Sciences Expérimentales": ["Arabe" , "Français" , , "Histoire-Géographie" , "Education-Islamique"],
+                // , "Éducation Islamique", "Histoire-Géographie"
             },
             "2bac": {
-                "Sciences Mathématiques": ["Mathématiques", "Physique-Chimie", "SVT", "Anglais", "Philosophie"],
-                "Sciences Physiques": ["Mathématiques", "Physique-Chimie", "SVT", "Anglais", "Philosophie"],
-                "Sciences de la Vie et de la Terre": ["Mathématiques", "Physique-Chimie", "SVT", "Anglais", "Philosophie"]
+                "Sciences Physiques": ["Mathématiques", "Physique-Chimie", "SVT" , "Philosophie", "Anglais"],
+                
+                "Sciences de la Vie et de la Terre": ["Mathématiques", "Physique-Chimie", "SVT" , "Philosophie", "Anglais"]
             }
         };
-
-        function update_Filiere() {
-            const niveau = document.getElementById('niveau').value;
-            const filiereSelect = document.getElementById('filiere');
-            const matiereSelect = document.getElementById('matiere');
+        // "Sciences Mathématiques": ["Mathématiques", "Physique-Chimie", "SVT", "Anglais", "Philosophie"],
+          function update_Filiere() {
+             const niveau = document.getElementById('niveau').value;
+             const filiereSelect = document.getElementById('filiere');
+             const matiereSelect = document.getElementById('matiere');
             
 
             filiereSelect.innerHTML = '<option value="">Sélectionnez une filière</option>';
             matiereSelect.innerHTML = '<option value="">Sélectionnez d\'abord une filière</option>';
             if (niveau && coursesData[niveau]) {
-                const filieres = Object.keys(coursesData[niveau]);
+                 const filieres = Object.keys(coursesData[niveau]);
                 filieres.forEach(filiere => {
-                    const option = document.createElement('option');
+                     const option = document.createElement('option');
                     option.value = filiere;
                     option.textContent = filiere;
                     filiereSelect.appendChild(option);
@@ -331,15 +229,15 @@
         }
 
         function update_Matiere() {
-            const niveau = document.getElementById('niveau').value;
-            const filiere = document.getElementById('filiere').value;
-            const matiereSelect = document.getElementById('matiere');
+             const niveau = document.getElementById('niveau').value;
+             const filiere = document.getElementById('filiere').value;
+             const matiereSelect = document.getElementById('matiere');
             matiereSelect.innerHTML = '<option value="">Sélectionnez une matière</option>';
             
             if (niveau && filiere && coursesData[niveau] && coursesData[niveau][filiere]) {
-                const matieres = coursesData[niveau][filiere];
+                 const matieres = coursesData[niveau][filiere];
                 matieres.forEach(matiere => {
-                    const option = document.createElement('option');
+                      const option = document.createElement('option');
                     option.value = matiere.toLowerCase().replace(' ', '-');
                     option.textContent = matiere;
                     matiereSelect.appendChild(option);

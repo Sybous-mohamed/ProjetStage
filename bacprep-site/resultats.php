@@ -1,29 +1,41 @@
 <?php
+session_start(); // Ajouter session pour l'utilisateur
+
 $host = 'localhost';
-$db = 'mon_site';
+ $db = 'mon_site';
 $user = 'root';
 $pass = '';
 //connexion database
 $conn = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
 // GET les information -> URL
 $niveau = isset($_GET['niveau']) ? strtoupper($_GET['niveau']) : '';
-$filiere = isset($_GET['filiere']) ? ucwords(strtolower($_GET['filiere'])) : '';
-$matiere = isset($_GET['matiere']) ? str_replace('-', ' ', ucwords(strtolower($_GET['matiere']))) : '';
-$matiere = str_replace(' ', '-', $matiere);
+$filiere = isset($_GET['filiere']) ? $_GET['filiere'] : '';
+$matiere = isset($_GET['matiere']) ? $_GET['matiere'] : '';
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 if ($niveau && $filiere && $matiere) {
     if ($search) {
-        $stmt = $conn->prepare("SELECT * FROM cours WHERE niveau = ? AND filiere = ? AND matiere = ? AND titre LIKE ?");
+        $stmt = $conn->prepare("SELECT * FROM cours WHERE niveau =  ?  AND filiere = ?  AND matiere = ?  AND titre LIKE ?");
         $stmt->execute([$niveau, $filiere, $matiere, '%'.$search.'%']);
     } else {
-        $stmt = $conn->prepare("SELECT * FROM cours WHERE niveau = ? AND filiere = ? AND matiere = ?");
+         $stmt = $conn->prepare("SELECT * FROM cours WHERE niveau = ? AND filiere = ? AND matiere = ? ");
         $stmt->execute([$niveau, $filiere, $matiere]);
     }
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
     $results = [];
+}
+
+// Récupérer les favoris de l'utilisateur si connecté
+$user_favorites = [];
+if ($user_id) {
+     $fav_stmt = $conn->prepare("SELECT cours_id FROM favorites WHERE user_id = ?");
+    $fav_stmt->execute([$user_id]);
+    $user_favorites = $fav_stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 ?>
 
@@ -128,6 +140,24 @@ if ($niveau && $filiere && $matiere) {
             background-color: #2980b9;
         }
 
+        .btn-fav {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #bdc3c7;
+            transition: color 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .btn-fav:hover {
+            color: #f39c12;
+        }
+
+        .btn-fav.favorite {
+            color: #f39c12;
+        }
+
         .no-results {
             text-align: center;
             padding: 2rem;
@@ -136,6 +166,16 @@ if ($niveau && $filiere && $matiere) {
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             color: #7f8c8d;
         }
+
+        .login-message {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -143,16 +183,22 @@ if ($niveau && $filiere && $matiere) {
 <div class="body">
     <h1>Résultats pour <?= htmlspecialchars($matiere) ?>  - <?= htmlspecialchars($filiere) ?> -  <?= htmlspecialchars($niveau) ?></h1>
     
-    <!--recherche -->
-    <div class="search-container">
-        <form method="get" action="">
-            <input type="hidden" name="niveau" value="<?= htmlspecialchars($niveau) ?>">
+    <?php if (!$user_id): ?>
+         <div class="login-message">
+            <p>Connectez-vous pour pouvoir ajouter des cours à vos favoris.</p>
+        </div>
+    <?php endif; ?>
+    
+     <!--recherche -->
+     <div class="search-container">
+         <form method="get" action="">
+             <input type="hidden" name="niveau" value="<?= htmlspecialchars($niveau) ?>">
             <input type="hidden" name="filiere" value="<?= htmlspecialchars($filiere) ?>">
             <input type="hidden" name="matiere" value="<?= htmlspecialchars(str_replace(' ', '-', $matiere)) ?>">
             <input type="text" 
                    class="search-input" 
                    name="search" 
-                   placeholder="Rechercher un cours par titre..." 
+                    placeholder="Rechercher un cours par titre..." 
                    value="<?= htmlspecialchars($search) ?>">
             <button type="submit" class="search-btn">Rechercher</button>
         </form>
@@ -167,18 +213,27 @@ if ($niveau && $filiere && $matiere) {
   Télécharger</a>
                 <a href="<?= htmlspecialchars($row['youtube_url']) ?>" target="_blank"><i class='bx bx-show'></i>
  Regarder</a>
+                <?php if ($user_id): ?>
+                    <button class="btn-fav <?= in_array($row['id'], $user_favorites) ? 'favorite' : '' ?>" 
+                              data-cours-id="<?= $row['id'] ?>" 
+                             title="Ajouter aux favoris">
+                         <i class='bx bx-star'></i>
+                    </button>
+                <?php endif; ?>
             </div>
-        <?php endforeach; ?>
-        <!-- aucun resultat -->
+         <?php endforeach; ?>
+        <!-- aucun resultat  -->
     <?php else: ?>
         <div class="no-results">
             <p><?= $search ? 'Aucun résultat trouvé pour "'.htmlspecialchars($search).'"' : 'Aucun cours trouvé pour cette matière.' ?></p>
-            <?php if ($search): ?>
+             <?php if ($search): ?>
                 <a href="?niveau=<?= htmlspecialchars($niveau) ?>&filiere=<?= htmlspecialchars($filiere) ?>&matiere=<?= htmlspecialchars(str_replace(' ', '-', $matiere)) ?>" class="btn">Afficher tous les cours</a>
             <?php endif; ?>
         </div>
     <?php endif; ?>
 </div>
+
+<?php include("includes/footer.php") ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -186,6 +241,47 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchInput && !searchInput.value) {
         searchInput.focus();
     }
+     
+     //  des favorite
+    const favButtons = document.querySelectorAll('.btn-fav');
+    
+     favButtons.forEach(button => {
+         button.addEventListener('click', function() {
+             const coursId = this.getAttribute('data-cours-id');
+            const isFavorite = this.classList.contains('favorite');
+            
+            // Envoyer requête AJAX
+            fetch('toggle_favorite.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cours_id: coursId,
+                    action: isFavorite ? 'remove' : 'add'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // l'apparence du bouton
+                    if (isFavorite) {
+                        this.classList.remove('favorite');
+                         this.title = 'Ajouter aux favoris';
+                     } else {
+                        this.classList.add('favorite');
+                        this.title = 'Retirer des favoris';
+                    }
+                } else {
+                     alert('Erreur: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                 alert('Une erreur est survenue');
+            });
+        });
+    });
 });
 </script>
 

@@ -4,8 +4,8 @@
 <style>
     .header {
         background-color: #2c3e50;
-        padding: 0.8rem 2rem; 
-        height: 30px; 
+        padding: 0.75rem 2rem; 
+        /* height: 30px;  */
         position: fixed;
         top: 0;
         left: 0;
