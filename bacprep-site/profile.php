@@ -105,7 +105,7 @@ try {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mon Profil - Favoris</title>
+    <title>Mon Profil</title>
     <?php include('includes/header.php'); ?>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
@@ -143,14 +143,14 @@ try {
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .section-title {
+        .title-change-mot-pass {
             display: flex;
             align-items: center;
             margin-bottom: 1.5rem;
             color: #2c3e50;
         }
 
-        .section-title i {
+        .title-change-mot-pass i {
             color: #f39c12;
             margin-right: 10px;
             font-size: 24px;
@@ -269,18 +269,18 @@ try {
             margin-bottom: 2rem;
         }
 
-        .form-group {
+        .div-profil {
             margin-bottom: 1.5rem;
         }
 
-        .form-group label {
+        .div-profil label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: bold;
             color: #2c3e50;
         }
 
-        .form-group input {
+        .div-profil input {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -289,7 +289,7 @@ try {
             box-sizing: border-box;
         }
 
-        .form-group input:focus {
+        .div-profil input:focus {
             border-color: #3498db;
             outline: none;
             box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
@@ -300,7 +300,7 @@ try {
             gap: 1rem;
         }
 
-        .form-row .form-group {
+        .form-row .div-profil {
             flex: 1;
         }
 
@@ -375,20 +375,20 @@ try {
 
     <!--  modification du profil -->
     <div class="profile-form">
-        <h2 class="section-title">
+        <h2 class="title-change-mot-pass">
             <i class='bx bx-user'></i>
             Informations personnelles
         </h2>
         
         <form method="POST" action="">
             <div class="form-row">
-                <div class="form-group">
+                <div class="div-profil">
                     <label for="nom">Nom complet</label>
                     <input type="text" id="nom" name="nom" 
                            value="<?= htmlspecialchars($user['username']) ?>" 
                            required maxlength="100">
                 </div>
-                <div class="form-group">
+                <div class="div-profil">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" 
                            value="<?= htmlspecialchars($user['email']) ?>" 
@@ -405,25 +405,25 @@ try {
 
     <!-- changement de mot de passe -->
     <div class="profile-form">
-        <h2 class="section-title">
+        <h2 class="title-change-mot-pass">
             <i class='bx bx-lock'></i>
             Changer le mot de passe
         </h2>
         
         <form method="POST" action="">
-            <div class="form-group">
+            <div class="div-profil">
                 <label for="current_password">Mot de passe actuel</label>
                 <input type="password" id="current_password" name="current_password" 
                        required minlength="6">
             </div>
             
             <div class="form-row">
-                <div class="form-group">
+                <div class="div-profil">
                     <label for="new_password">Nouveau mot de passe</label>
                     <input type="password" id="new_password" name="new_password" 
                            required minlength="6">
                 </div>
-                <div class="form-group">
+                <div class="div-profil">
                     <label for="confirm_password">Confirmer le nouveau mot de passe</label>
                     <input type="password" id="confirm_password" name="confirm_password" 
                            required minlength="6">
@@ -438,7 +438,7 @@ try {
     </div>
 
     <div class="favorites-section">
-        <h2 class="section-title">
+        <h2 class="title-change-mot-pass">
             <i class='bx bx-star'></i>
             Mes Cours Favoris (<?= count($favorites) ?>)
         </h2>

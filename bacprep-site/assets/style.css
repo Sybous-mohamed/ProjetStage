@@ -514,3 +514,8 @@ body {
     justify-content: center;
   }
 }
+.logo img {
+  height: 40px; 
+  width: auto;
+  object-fit: contain;
+  }

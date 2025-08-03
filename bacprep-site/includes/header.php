@@ -25,13 +25,14 @@
         font-size: 1.6rem; 
         font-weight: bold;
     }
+    
 
-    .profile-dropdown {
+    .profile {
         position: relative;
         display: inline-block;
     }
 
-    .dropbtn {
+    .profile-btn {
         background-color: transparent;
         color: white;
         border: none;
@@ -46,15 +47,15 @@
         white-space: nowrap; 
     }
 
-    .dropbtn:hover {
+    .profile-btn:hover {
         background-color: rgba(255, 255, 255, 0.1);
     }
 
-    .dropbtn i {
+    .profile-btn i {
         font-size: 1.2rem; 
     }
 
-    .dropdown-content {
+    .content-btn {
         display: none;
         position: absolute;
         right: 0;
@@ -68,7 +69,7 @@
         margin-top: 5px; 
     }
 
-    .dropdown-content a {
+    .content-btn a {
         color: #333;
         padding: 14px 18px; 
         text-decoration: none;
@@ -78,16 +79,16 @@
         white-space: nowrap;
     }
 
-    .dropdown-content a:hover {
+    .content-btn a:hover {
         background-color: #f1f1f1;
     }
 
-    .dropdown-content a i {
+    .content-btn a i {
         margin-right: 10px; 
         width: 16px; 
     }
 
-    .profile-dropdown:hover .dropdown-content {
+    .profile:hover .content-btn {
         display: block;
     }
 
@@ -95,14 +96,14 @@
 
 <header class="header">
     <div class="logo">
-        <span>Bacprep</span>
+        <img src="/bacprep-site/logo.jpeg" alt="logo" width="160" height="50">
     </div>
 
-    <div class="profile-dropdown">
-        <button class="dropbtn">
+    <div class="profile">
+        <button class="profile-btn">
             <i class='bx bx-user'></i> Profil
         </button>
-        <div class="dropdown-content">
+        <div class="content-btn">
              <a href="profile.php"><i class='bx bx-user'></i> Mon Compte</a>
             <a href="logout.php"><i class='bx bx-log-out'></i> Déconnexion</a>
         </div>

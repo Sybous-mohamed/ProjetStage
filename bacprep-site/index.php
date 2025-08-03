@@ -42,7 +42,7 @@
     <!-- Header -->
     <header class="header">
         <div class="logo">
-            <span>BacPrep</span>
+            <img src="logo.jpeg" alt="logo" height="50px" width="120px">
         </div>
         
         <nav class="links">

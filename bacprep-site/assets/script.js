@@ -56,3 +56,6 @@ window.addEventListener('scroll', function() {
         scrollTop.classList.remove('show');
     }
 });
+
+
+                        HelloWorld("print");
